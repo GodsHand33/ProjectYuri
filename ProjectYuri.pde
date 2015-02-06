@@ -12,21 +12,36 @@ byte[][] pData;
 ArrayList<PVector> toBeAddedDataList;
 ArrayList<PVector> toBeRemovedDataList;
 
-int POINT_SIZE = 20;
+int POINT_SIZE = 15;
 
 float MIN_BRIGHTNESS = 0;
 float MAX_BRIGHTNESS = 98;
 
 float THREHOLD = 0.5;
 
+float Radius;
+
 int tileCountX;
 int tileCountY;
+
+PImage img;
+
+int fcount, lastm;
+float frate;
+int fint = 1;
 
 void setup()
 {
   size(1280, 800, P2D);
 
-  frameRate(30);
+  Radius = width;
+
+  //  frameRate(30);
+
+  blendMode(ADD);
+
+  img = loadImage("sprite.png");
+
 
   GUISetup();
 
@@ -69,8 +84,10 @@ void draw()
 
     UpdateNodes();
 
-//    noLoop();
+    //    noLoop();
   }
+
+  DisplayFPS();
 }
 
 void PixelAnalysis()
@@ -121,7 +138,7 @@ void RemoveNode()
   println(nodeHashMap);
   println("#########");
   println(toBeRemovedDataList);
-  
+
   for (int i = 0; i < toBeRemovedDataList.size (); i++)
   {
     if (nodeHashMap.containsKey(toBeRemovedDataList.get(i)))
@@ -130,7 +147,7 @@ void RemoveNode()
       Node node = nodeHashMap.get(toBeRemovedDataList.get(i));
 
       //set the node's target to bottom
-      node.setTarget(new PVector(node.position.x, height));
+      node.setNoTarget();
 
       //add the node to the nodeRecycleList
       nodeRecycleList.add(node);
@@ -190,6 +207,20 @@ void UpdateNodes()
   }
 
   println("\n\n");
+}
+
+void DisplayFPS()
+{
+  fcount += 1;
+  int m = millis();
+  if (m - lastm > 1000 * fint) {
+    frate = float(fcount) / fint;
+    fcount = 0;
+    lastm = m;
+    println("fps: " + frate);
+  }
+  fill(255);
+  text("fps: " + frate, 0, 200);
 }
 
 void keyPressed()
