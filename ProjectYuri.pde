@@ -14,10 +14,21 @@ ArrayList<PVector> toBeRemovedDataList;
 
 int POINT_SIZE = 15;
 
+//tunable parameters
+
+float screenAlpha = 30;
+
 float MIN_BRIGHTNESS = 0;
 float MAX_BRIGHTNESS = 98;
-
 float THREHOLD = 0.5;
+
+float K = 0.001;
+float damping = 0.9;
+float randomness = 0.5;
+
+float noiseScale = 100;
+float noiseStrength = 10;
+float step = 1;
 
 float Radius;
 
@@ -25,22 +36,25 @@ int tileCountX;
 int tileCountY;
 
 PImage img;
+PImage bgImg;
 
+//fps
 int fcount, lastm;
 float frate;
 int fint = 1;
 
 void setup()
 {
-  size(1280, 800, P2D);
-
+  size(1280, 1024, P2D);
+  background(0);
   Radius = width;
 
   //  frameRate(30);
 
-  blendMode(ADD);
+//  blendMode(ADD);
 
   img = loadImage("sprite.png");
+  bgImg = loadImage("bg.png");
 
 
   GUISetup();
@@ -69,7 +83,13 @@ void setup()
 
 void draw()
 {
-  background(0);
+  //  fill(0, screenAlpha);
+  //  rect(0, 0, width, height);
+
+  imageMode(CORNER);
+  tint(255, 255, 255);
+  image(bgImg, 0, 0);
+  //  background(0);
 
   if (VIDEO.available()) {
     VIDEO.read();

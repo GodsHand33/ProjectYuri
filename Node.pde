@@ -3,13 +3,7 @@ class Node
   PVector position;
   PVector velocity;
   PVector acceleration;
-
-  float K = 0.001;
-  float damping = 0.9;
-  float randomness = 0.5;
-
   private PVector target;
-
   int type;
 
   Node(float x, float y)
@@ -19,7 +13,7 @@ class Node
     target = new PVector(x, y);
 
     float r = random(1);
-    if (r < 0.9)
+    if (r < 0.95)
       type = 0;
     else
       type = 1;
@@ -36,7 +30,9 @@ class Node
     velocity.add(new PVector(random(-randomness, randomness), random(-randomness, randomness)));
     position.add(velocity);
 
-    render();
+    float blink = random(1);
+    if (blink < 0.9)
+      render();
   }
 
   void render()
@@ -44,13 +40,16 @@ class Node
     switch(type)
     {
     case 0:
-      stroke(255);
-      strokeWeight(5);
-      point(position.x, position.y);
+      //      stroke(255);
+      //      strokeWeight(5);
+      //      point(position.x, position.y);
+
+      imageMode(CENTER);
+      image(img, position.x, position.y, 16, 16);
       break;
     case 1:
       imageMode(CENTER);
-      image(img, position.x, position.y);
+      image(img, position.x, position.y, 32, 32);
       break;
     }
   }
