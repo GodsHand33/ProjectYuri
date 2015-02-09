@@ -38,6 +38,19 @@ int tileCountY;
 PImage img;
 PImage bgImg;
 
+//color
+float hue1 = 22;
+float hue2 = 45;
+
+float saturation1 = 0.5;
+float saturation2 = 0.9;
+
+float brightness1 = 0.3;
+float brightness2 = 1.0;
+
+float alpha1 = 0.2;
+float alpha2 = 0.7;
+
 //fps
 int fcount, lastm;
 float frate;
@@ -47,13 +60,14 @@ void setup()
 {
   size(1280, 1024, P2D);
   background(0);
+  frame.setResizable(true);
   Radius = width;
 
   //  frameRate(30);
 
-//  blendMode(ADD);
+  //  blendMode(ADD);
 
-  img = loadImage("sprite.png");
+  img = loadImage("star.png");
   bgImg = loadImage("bg.png");
 
 
@@ -83,13 +97,11 @@ void setup()
 
 void draw()
 {
-  //  fill(0, screenAlpha);
-  //  rect(0, 0, width, height);
-
+  
   imageMode(CORNER);
-  tint(255, 255, 255);
+  colorMode(RGB, 255, 255, 255, 100);
+  tint(255, 255, 255, 100);
   image(bgImg, 0, 0);
-  //  background(0);
 
   if (VIDEO.available()) {
     VIDEO.read();
@@ -240,7 +252,7 @@ void DisplayFPS()
     println("fps: " + frate);
   }
   fill(255);
-  text("fps: " + frate, 0, 200);
+  text("fps: " + frate, 0, height - 20);
 }
 
 void keyPressed()
