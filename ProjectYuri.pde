@@ -12,7 +12,7 @@ byte[][] pData;
 ArrayList<PVector> toBeAddedDataList;
 ArrayList<PVector> toBeRemovedDataList;
 
-int POINT_SIZE = 15;
+int POINT_SIZE = 16;
 
 //tunable parameters
 
@@ -36,6 +36,7 @@ int tileCountX;
 int tileCountY;
 
 PImage img;
+PImage img1;
 PImage bgImg;
 
 //color
@@ -68,6 +69,7 @@ void setup()
   //  blendMode(ADD);
 
   img = loadImage("star.png");
+  img1 = loadImage("star1.png");
   bgImg = loadImage("bg.png");
 
 
@@ -252,7 +254,7 @@ void DisplayFPS()
     println("fps: " + frate);
   }
   fill(255);
-  text("fps: " + frate, 0, height - 20);
+  text("fps: " + frate + " node count: " + nodeHashMap.size() + " " + nodeRecycleList.size(), 0, 100);
 }
 
 void keyPressed()

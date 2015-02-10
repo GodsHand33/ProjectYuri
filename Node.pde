@@ -10,35 +10,54 @@ class Node
   {
     velocity = new PVector();
     target = new PVector(x, y);
-    
+
     float angle = atan2(target.y - height/2, target.x - width/2);
     position = new PVector(width/2 + cos(angle) * Radius, height/2 + sin(angle) * Radius);
-    
+
     float r = random(1);
 
-    if (r < 0.6)
-      type = 1;
-    else if (r > 0.6 && r < 0.9)
+    if (r < 0.33)
       type = 0;
-    else
+    else if (r > 0.33 && r < 0.66)
+      type = 1;
+    else if (r > 0.66 && r < 0.99)
       type = 2;
+    else
+      type = 3;
   }
 
   void update()
   {
-    //movement
+    movement();
+    if (!outOfBorder())
+    {
+      noiseUpdate();
+      render();
+    }
+  }
+
+  void movement()
+  {
     PVector diff = PVector.sub(target, position);
     diff.mult(K);
+    diff.add(new PVector(random(-randomness, randomness), random(-randomness, randomness)));
     velocity.add(diff);
     velocity.mult(damping);
-    velocity.add(new PVector(random(-randomness, randomness), random(-randomness, randomness)));
     position.add(velocity);
+  }
 
-    noiseUpdate();
+  boolean outOfBorder()
+  {
+    if (position.x < 0)
+      return true;
+    if (position.x > width)
+      return true;
+    if (position.y < 0)
+      return true;
+    if (position.y > height)
+      return true;
 
-    float blink = random(1);
-    if (blink < 0.9)
-      render();
+    return false;
   }
 
   void noiseUpdate()
@@ -61,6 +80,10 @@ class Node
 
   void render()
   {
+    float blink = random(1);
+    if (blink < 0.1)
+      return;
+
     switch(type)
     {
     case 0:
@@ -70,9 +93,14 @@ class Node
       break;
     case 1:
       imageMode(CENTER);
-      image(img, position.x, position.y, img.width/2, img.height/2);
+      image(img1, position.x, position.y, img1.width * .8, img1.height * .8);
+      //      image(img1, position.x, position.y);
       break;
     case 2:
+      imageMode(CENTER);
+      image(img, position.x, position.y, img.width * .5, img.height * .5);
+      break;
+    case 3:
       imageMode(CENTER);
       image(img, position.x, position.y);
       break;
@@ -89,7 +117,7 @@ class Node
     float angle = atan2(position.y - height/2, position.x - width/2);
     target = new PVector(width/2 + cos(angle) * Radius, height/2 + sin(angle) * Radius);
   }
-  
+
   float constrainedMapping(float n, float sourceLow, float sourceHigh, float destLow, float destHigh)
   {
     n = constrain(n, sourceLow, sourceHigh);
