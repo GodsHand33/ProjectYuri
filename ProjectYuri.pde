@@ -1,8 +1,17 @@
 import processing.video.*;
+import SimpleOpenNI.*;
 import controlP5.*;
 
+//mode 0: cam
+//mode 1: kinect
+int mode = 1;
+
+//the screen ratio should always be 4:3
 Capture VIDEO;
+SimpleOpenNI kinect;
 ControlP5 cp5;
+
+PImage depthImage;
 
 HashMap<PVector, Node> nodeHashMap;
 ArrayList<Node> nodeRecycleList;
@@ -12,7 +21,7 @@ byte[][] pData;
 ArrayList<PVector> toBeAddedDataList;
 ArrayList<PVector> toBeRemovedDataList;
 
-int POINT_SIZE = 16;
+int POINT_SIZE = 24;
 
 //tunable parameters
 
@@ -59,12 +68,12 @@ int fint = 1;
 
 void setup()
 {
-  size(1280, 1024, P2D);
+  size(1280, 960, P2D);
   background(0);
   frame.setResizable(true);
   Radius = width;
 
-  //  frameRate(30);
+  frameRate(30);
 
   //  blendMode(ADD);
 
@@ -75,8 +84,10 @@ void setup()
 
   GUISetup();
 
-  VIDEO = new Capture(this, width, height);
-  VIDEO.start();
+  if (mode == 0)
+    setupCam();
+  else if (mode == 1)
+    setupKinect();
 
   tileCountX = width / POINT_SIZE;
   tileCountY = height / POINT_SIZE;
@@ -99,30 +110,70 @@ void setup()
 
 void draw()
 {
-  
+
   imageMode(CORNER);
   colorMode(RGB, 255, 255, 255, 100);
   tint(255, 255, 255, 100);
   image(bgImg, 0, 0);
 
-  if (VIDEO.available()) {
-    VIDEO.read();
-    VIDEO.loadPixels();
+  if (mode == 0)
+    updateCam();
+  else if (mode == 1)
+    updateKinect();
 
-    //this will fill the "to Be Added/Removed" data list
-    PixelAnalysis();
+  //this will fill the "to Be Added/Removed" data list
+  PixelAnalysis();
 
-    RemoveNode();
+  RemoveNode();
 
-    AddNode();
+  AddNode();
 
-    UpdateNodes();
+  UpdateNodes();
 
-    //    noLoop();
-  }
 
   DisplayFPS();
 }
+
+void setupCam()
+{
+  //cam setup
+  VIDEO = new Capture(this, width, height);
+  VIDEO.start();
+}
+
+void setupKinect()
+{
+  //kinect setup
+  kinect = new SimpleOpenNI(this);
+
+  if (kinect.isInit() == false)
+  {
+    println("Can't init SimpleOpenNI, maybe the camera is not connected!"); 
+    exit();
+  } else
+  {
+    kinect.setMirror(true);
+    kinect.enableIR();
+  }
+}
+
+void updateCam()
+{
+  //cam update
+  if (VIDEO.available()) {
+    VIDEO.read();
+    VIDEO.loadPixels();
+  }
+}
+
+void updateKinect()
+{
+  //kinect update
+  kinect.update();
+  depthImage = kinect.irImage();
+}
+
+
 
 void PixelAnalysis()
 {
@@ -135,9 +186,26 @@ void PixelAnalysis()
     {
       if ( (i % 2 == 0 && j % 2 == 1) || (i % 2 == 1 && j % 2 == 0))
       {
-        int loc = j * POINT_SIZE * VIDEO.width + VIDEO.width - 1 - i * POINT_SIZE;
-        color c = VIDEO.pixels[loc];
-        float scale = map(brightness(c), MIN_BRIGHTNESS, MAX_BRIGHTNESS, 1, 0);
+
+        color c = color(0);
+        float scale = 0;
+
+        if (mode == 0)
+        {
+          int loc = j * POINT_SIZE * VIDEO.width + VIDEO.width - 1 - i * POINT_SIZE;
+          c = VIDEO.pixels[loc];
+          scale = map(brightness(c), MIN_BRIGHTNESS, MAX_BRIGHTNESS, 1, 0);
+        } else if (mode == 1)
+        {
+          int tileSizeX = depthImage.width / tileCountX;
+          int tileSizeY = depthImage.height / tileCountY;
+          int loc = j * tileSizeY * depthImage.width + i * tileSizeX;
+          c = depthImage.pixels[loc];
+          scale = map(brightness(c), 0, 255, 0, 1);
+        }
+
+
+
 
         if ( scale > THREHOLD ) //if new data is 1, then check pData
         {
@@ -184,7 +252,7 @@ void RemoveNode()
       node.setNoTarget();
 
       //add the node to the nodeRecycleList
-      nodeRecycleList.add(node);
+      nodeRecycleList.add(0, node);
 
       //remove the data from hashmap
       nodeHashMap.remove(toBeRemovedDataList.get(i));

@@ -93,12 +93,12 @@ class Node
       break;
     case 1:
       imageMode(CENTER);
-      image(img1, position.x, position.y, img1.width * .8, img1.height * .8);
+      image(img1, position.x, position.y, img1.width * 1, img1.height * 1);
       //      image(img1, position.x, position.y);
       break;
     case 2:
       imageMode(CENTER);
-      image(img, position.x, position.y, img.width * .5, img.height * .5);
+      image(img, position.x, position.y, img.width * 1, img.height * 1);
       break;
     case 3:
       imageMode(CENTER);
