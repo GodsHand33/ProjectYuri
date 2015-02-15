@@ -25,7 +25,7 @@ void PixelAnalysis()
           c = cam.pixels[loc];
         } else if (mode == 1 || mode == 2)
         {
-          int loc = j * tileSizeY * depthImage.width + i * tileSizeX;
+          int loc = j * tileSizeY * depthImage.width + depthImage.width - 1 - i * tileSizeX;
           c = depthImage.pixels[loc];
         }
 

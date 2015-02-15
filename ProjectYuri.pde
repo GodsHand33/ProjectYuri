@@ -36,7 +36,7 @@ PImage bgImg;
 void setup()
 {
   //the screen ratio should always be 4:3, to fit kinect data source
-  size(1280, 960, P2D);
+  size(1280, 960, P3D);
   background(0);
   frame.setResizable(true);
   Radius = width;

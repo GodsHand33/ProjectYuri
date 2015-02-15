@@ -13,33 +13,53 @@ float brightness2 = 1.0;
 float alpha1 = 0.2;
 float alpha2 = 0.7;
 
+float guiPositionY = 100;
+
 void GUISetup()
 {
   cp5 = new ControlP5(this);
 
+
+
   range = cp5.addRange("rangeController")
     // disable broadcasting since setRange and setRangeValues will trigger an event
     .setBroadcast(false) 
-      .setPosition(0, 10)
+      .setPosition(0, guiPositionY)
         .setSize(100, 10)
           .setHandleSize(10)
             .setRange(0, 1)
               // after the initialization we turn broadcast back on again
               .setBroadcast(true);
 
+  cp5.addSlider("kMaxDist")
+    .setPosition(0, guiPositionY + 10)
+      .setRange(0, 300)
+        ;
+
+  cp5.addSlider("kMinDist")
+    .setPosition(0, guiPositionY + 20)
+      .setRange(0, 100)
+        ;
+        
+  cp5.addSlider("kReachDistThrehold")
+    .setPosition(0, guiPositionY + 40)
+      .setRange(1, 100)
+        ;
+
+
   cp5.addSlider("K")
-    .setPosition(0, 20)
+    .setPosition(0, guiPositionY + 30)
       .setRange(0, 0.01)
         ;
 
-  cp5.addSlider("damping")
-    .setPosition(0, 30)
-      .setRange(0.8, 1)
-        ;
-  cp5.addSlider("randomness")
-    .setPosition(0, 40)
-      .setRange(0, 5)
-        ;
+  //  cp5.addSlider("damping")
+  //    .setPosition(0, 30)
+  //      .setRange(0.8, 1)
+  //        ;
+  //  cp5.addSlider("randomness")
+  //    .setPosition(0, 40)
+  //      .setRange(0, 5)
+  //        ;
 }
 
 void controlEvent(ControlEvent theControlEvent) {

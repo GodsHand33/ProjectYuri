@@ -6,6 +6,11 @@ float noiseScale = 100;
 float noiseStrength = 10;
 float step = 1;
 
+float kMaxDist = 80;
+float kMinDist = 50;
+
+float kReachDistThrehold = 10;
+
 class Node
 {
   PVector position;
@@ -13,6 +18,7 @@ class Node
   PVector acceleration;
   private PVector target;
   int type;
+  boolean hasLines = false;
 
   Node(float x, float y)
   {
@@ -28,18 +34,26 @@ class Node
       type = 0;
     else if (r > 0.33 && r < 0.66)
       type = 1;
-    else if (r > 0.66 && r < 0.99)
+    else if (r > 0.66 && r < 0.9)
       type = 2;
     else
+    {
       type = 3;
+      hasLines = true;
+    }
   }
 
   void update()
   {
     movement();
+
     if (!outOfBorder())
     {
       noiseUpdate();
+
+      if (hasLines && hasReachedTheTarget())
+        drawConnectionLines();
+
       render();
     }
   }
@@ -86,6 +100,13 @@ class Node
     tint(c);
   }
 
+  boolean hasReachedTheTarget()
+  {
+    if (PVector.dist(position, target) < kReachDistThrehold)
+      return true;
+    return false;
+  }
+
   void render()
   {
     float blink = random(1);
@@ -95,23 +116,43 @@ class Node
     switch(type)
     {
     case 0:
-      stroke(255);
+      stroke(0, 0, 100, 50);
       strokeWeight(3);
       point(position.x, position.y);
       break;
     case 1:
       imageMode(CENTER);
       image(img1, position.x, position.y, img1.width * 1, img1.height * 1);
-      //      image(img1, position.x, position.y);
       break;
     case 2:
       imageMode(CENTER);
-      image(img, position.x, position.y, img.width * 1, img.height * 1);
+      image(img, position.x, position.y, img.width * .7, img.height * .7);
       break;
     case 3:
       imageMode(CENTER);
       image(img, position.x, position.y);
       break;
+    }
+  }
+
+  void drawConnectionLines()
+  {
+    for (Node n : nodeHashMap.values ()) {
+      if (this != n && n.hasLines)
+      {
+        float distance = dist(position.x, position.y, n.position.x, n.position.y);
+        if (distance > kMinDist && distance < kMaxDist)
+        {
+          beginShape();
+          stroke(0, 0, 100, 0);
+          vertex(position.x, position.y);
+          stroke(0, 0, 100, 20);
+          vertex(0.5 * (position.x + n.position.x), 0.5 * (position.y + n.position.y));
+          stroke(0, 0, 100, 0);
+          vertex(n.position.x, n.position.y);
+          endShape();
+        }
+      }
     }
   }
 

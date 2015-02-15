@@ -16,7 +16,7 @@ void DisplayFPS()
     lastm = m;
     println("fps: " + frate);
   }
-  fill(255);
+  fill(0, 0, 100, 100);
   text("fps: " + frate + " node count: " + nodeHashMap.size() + " " + nodeRecycleList.size(), 0, 100);
 //  fill(255);
 //  text("fps: " + frate + " node count: " + nodeHashMap.size() + " " + nodeRecycleList.size(), 1, 101);
