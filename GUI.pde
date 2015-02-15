@@ -1,13 +1,21 @@
 Range range;
 
+//color
+float hue1 = 22;
+float hue2 = 45;
+
+float saturation1 = 0.5;
+float saturation2 = 0.9;
+
+float brightness1 = 0.3;
+float brightness2 = 1.0;
+
+float alpha1 = 0.2;
+float alpha2 = 0.7;
+
 void GUISetup()
 {
   cp5 = new ControlP5(this);
-
-  cp5.addSlider("THREHOLD")
-    .setPosition(0, 0)
-      .setRange(0, 1)
-        ;
 
   range = cp5.addRange("rangeController")
     // disable broadcasting since setRange and setRangeValues will trigger an event
@@ -15,8 +23,7 @@ void GUISetup()
       .setPosition(0, 10)
         .setSize(100, 10)
           .setHandleSize(10)
-            .setRange(0, 255)
-              //              .setRangeValues(128, 255)
+            .setRange(0, 1)
               // after the initialization we turn broadcast back on again
               .setBroadcast(true);
 
@@ -33,11 +40,6 @@ void GUISetup()
     .setPosition(0, 40)
       .setRange(0, 5)
         ;
-
-  cp5.addSlider("screenAlpha")
-    .setPosition(0, 50)
-      .setRange(0, 64)
-        ;
 }
 
 void controlEvent(ControlEvent theControlEvent) {
@@ -45,8 +47,8 @@ void controlEvent(ControlEvent theControlEvent) {
     // min and max values are stored in an array.
     // access this array with controller().arrayValue().
     // min is at index 0, max is at index 1.
-    MIN_BRIGHTNESS = int(theControlEvent.getController().getArrayValue(0));
-    MAX_BRIGHTNESS = int(theControlEvent.getController().getArrayValue(1));
+    kMinThrehold = theControlEvent.getController().getArrayValue(0);
+    kMaxThrehold = theControlEvent.getController().getArrayValue(1);
   }
 }
 

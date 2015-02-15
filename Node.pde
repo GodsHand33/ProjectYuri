@@ -1,3 +1,11 @@
+float K = 0.001;
+float damping = 0.9;
+float randomness = 0.5;
+
+float noiseScale = 100;
+float noiseStrength = 10;
+float step = 1;
+
 class Node
 {
   PVector position;
