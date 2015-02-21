@@ -30,12 +30,12 @@ class Node
 
     float r = random(1);
 
-    if (r < 0.33)
+    if (r < 0.95)
       type = 0;
-    else if (r > 0.33 && r < 0.66)
-      type = 1;
-    else if (r > 0.66 && r < 0.9)
-      type = 2;
+//    else if (r > 0.5 && r < 0.66)
+//      type = 1;
+//    else if (r > 0.66 && r < 0.9)
+//      type = 2;
     else
     {
       type = 3;
@@ -116,9 +116,8 @@ class Node
     switch(type)
     {
     case 0:
-      stroke(0, 0, 100, 50);
-      strokeWeight(3);
-      point(position.x, position.y);
+      imageMode(CENTER);
+      image(img1, position.x, position.y, img1.width * .5, img1.height * .5);
       break;
     case 1:
       imageMode(CENTER);
@@ -146,7 +145,7 @@ class Node
           beginShape();
           stroke(0, 0, 100, 0);
           vertex(position.x, position.y);
-          stroke(0, 0, 100, 20);
+          stroke(0, 0, 100, 100);
           vertex(0.5 * (position.x + n.position.x), 0.5 * (position.y + n.position.y));
           stroke(0, 0, 100, 0);
           vertex(n.position.x, n.position.y);

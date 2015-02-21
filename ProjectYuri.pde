@@ -15,7 +15,7 @@ SimpleOpenNI openni;
 ControlP5 cp5;
 Kinect kinect;
 
-int POINT_SIZE = 24;
+int POINT_SIZE = 12;
 
 float kMinThrehold = 0.6f;
 float kMaxThrehold = 1f;
@@ -28,6 +28,7 @@ int tileCountY;
 int tileSizeX;
 int tileSizeY;
 
+int backgroundStarCount = 500;
 
 PImage img;
 PImage img1;
@@ -37,6 +38,7 @@ void setup()
 {
   //the screen ratio should always be 4:3, to fit kinect data source
   size(1280, 960, P3D);
+//  size(960, 720, P3D);
   background(0);
   frame.setResizable(true);
   Radius = width;
@@ -82,6 +84,15 @@ void draw()
   colorMode(RGB, 255, 255, 255, 100);
   tint(255, 255, 255, 100);
   image(bgImg, 0, 0);
+  
+  randomSeed(0);
+  for (int i = 0; i < backgroundStarCount; i++)
+  {
+    stroke(255, random(0,50));
+    strokeWeight(random(1, 3));
+    point(random(width), random(height));
+  }
+  
 
   if (mode == 0)
     updateCam();
@@ -101,4 +112,3 @@ void draw()
 
   DisplayFPS();
 }
-
