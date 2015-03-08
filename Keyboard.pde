@@ -11,6 +11,9 @@ void keyPressed()
   } else if (key == 'p')
   {
     visualizePoint = !visualizePoint;
+  } else if (key == 'f')
+  {
+    showFPS = !showFPS;
   } else if (key=='1') {
     cp5.saveProperties(("hello.properties"));
   } else if (key=='2') {

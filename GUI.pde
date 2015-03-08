@@ -19,7 +19,7 @@ void GUISetup()
 {
   cp5 = new ControlP5(this);
 
-  Group g1 = cp5.addGroup("g1")
+  Group g1 = cp5.addGroup("Menu")
     .setPosition(0, 40)
       .setBackgroundHeight(50)
         .setBackgroundColor(color(255, 50))

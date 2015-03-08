@@ -5,6 +5,7 @@ int fint = 1;
 
 //visualization
 boolean visualizePoint = false;
+boolean showFPS = false;
 
 void DisplayFPS()
 {
@@ -17,9 +18,9 @@ void DisplayFPS()
     println("fps: " + frate);
   }
   fill(0, 0, 100, 100);
-  text("fps: " + frate + " node count: " + nodeHashMap.size() + " " + nodeRecycleList.size(), 0, 100);
-//  fill(255);
-//  text("fps: " + frate + " node count: " + nodeHashMap.size() + " " + nodeRecycleList.size(), 1, 101);
+  text("fps: " + frate + " node count: " + nodeHashMap.size() + " " + nodeRecycleList.size(), 100, 40);
+  //  fill(255);
+  //  text("fps: " + frate + " node count: " + nodeHashMap.size() + " " + nodeRecycleList.size(), 1, 101);
 }
 
 void VisualizePoint()
@@ -36,5 +37,4 @@ void VisualizePoint()
     }
   }
 }
-
 
