@@ -1,10 +1,14 @@
-// Visualization Branch
-
+import java.awt.Frame;
+import java.awt.BorderLayout;
 import processing.video.*;
 import SimpleOpenNI.*;
 import org.openkinect.*;
 import org.openkinect.processing.*;
 import controlP5.*;
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+
+
 
 //mode 0: cam
 //mode 1: openni
@@ -16,6 +20,16 @@ Capture cam;
 SimpleOpenNI openni;
 ControlP5 cp5;
 Kinect kinect;
+
+//minim
+Minim minim;
+AudioInput in;
+BeatDetect beat;
+
+boolean IsKick;
+boolean IsSnare;
+boolean IsHat;
+int sensitivity = 400;
 
 int POINT_SIZE = 12;
 
@@ -36,6 +50,23 @@ PImage img;
 PImage img1;
 PImage bgImg;
 
+Range range;
+
+//color
+float hue1 = 22;
+float hue2 = 45;
+
+float saturation1 = 0.5;
+float saturation2 = 0.9;
+
+float brightness1 = 0.3;
+float brightness2 = 1.0;
+
+float alpha1 = 0.2;
+float alpha2 = 0.7;
+
+ControlFrame cf;
+
 void setup()
 {
   //the screen ratio should always be 4:3, to fit kinect data source
@@ -51,8 +82,16 @@ void setup()
   img1 = loadImage("star1.png");
   bgImg = loadImage("bg.png");
 
-  GUISetup();
+  cf = addControlFrame("ControlPanel", 200, 200);
 
+  minim = new Minim(this);
+  in = minim.getLineIn();
+  beat = new BeatDetect();
+  beat.detectMode(BeatDetect.FREQ_ENERGY);
+  beat.setSensitivity (sensitivity);
+  IsKick = false;
+  IsSnare = false;
+  IsHat = false;
 
 
   if (mode == 0)
@@ -82,6 +121,11 @@ void setup()
 
 void draw()
 {
+  beat.detect(in.mix);
+  IsKick = beat.isKick();
+  IsSnare = beat.isSnare();
+  IsHat = beat.isHat();
+
   imageMode(CORNER);
   colorMode(RGB, 255, 255, 255, 100);
   tint(255, 255, 255, 100);
@@ -114,5 +158,21 @@ void draw()
 
   if (showFPS)
     DisplayFPS();
+
+  if (IsKick)
+  {
+    PVector p = new PVector(random(width), random(height));
+    PVector p2 = new PVector(random(width), random(height));
+    PVector p3 = new PVector(random(width), random(height));
+
+    int shakeType = (int)random(3);
+    //    int shakeType = 0;
+
+    for (Node node : nodeHashMap.values ()) {
+      node.shake(p, shakeType);
+      node.shake(p2, shakeType);
+      node.shake(p3, shakeType);
+    }
+  }
 }
 
