@@ -1,4 +1,4 @@
-float K = 0.001;
+float K = 0.1;
 float damping = 0.9;
 float randomness = 0.5;
 
@@ -11,6 +11,11 @@ float kMinDist = 50;
 
 float kReachDistThrehold = 10;
 
+float kShakeRange = 400;
+float kShakeForce = 100;
+
+float r = 400;
+
 class Node
 {
   PVector position;
@@ -18,6 +23,7 @@ class Node
   PVector acceleration;
   private PVector target;
   int type;
+  float size = 1f;
   boolean hasLines = false;
 
   Node(float x, float y)
@@ -31,11 +37,14 @@ class Node
     float r = random(1);
 
     if (r < 0.95)
+    {
       type = 0;
-//    else if (r > 0.5 && r < 0.66)
-//      type = 1;
-//    else if (r > 0.66 && r < 0.9)
-//      type = 2;
+      size = random(0.2f, 0.7f);
+    }
+    //    else if (r > 0.5 && r < 0.66)
+    //      type = 1;
+    //    else if (r > 0.66 && r < 0.9)
+    //      type = 2;
     else
     {
       type = 3;
@@ -66,6 +75,41 @@ class Node
     velocity.add(diff);
     velocity.mult(damping);
     position.add(velocity);
+  }
+
+  public void shake(PVector origin, int shakeType)
+  {
+    switch(shakeType)
+    {
+    case 0:
+      {
+        PVector dir = PVector.sub(position, origin);
+        float distance = dir.mag();
+        float force = map(distance, 0, kShakeRange, kShakeForce, 0);
+        force = constrain(force, 0, kShakeForce);
+        dir.normalize();
+        position = new PVector(position.x + dir.x * force, position.y + dir.y * force);
+      }
+      break;
+    case 1:
+      {
+        float distance = abs(position.x - origin.x);
+        float sign = (position.x > origin.x) ? 1 : -1;
+        float force = map(distance, 0, kShakeRange, kShakeForce, 0);
+        force = constrain(force, 0, kShakeForce);
+        position = new PVector(position.x + sign * force, position.y);
+      }
+      break;
+    case 2:
+      {
+        float distance = abs(position.y - origin.y);
+        float sign = (position.y > origin.y) ? 1 : -1;
+        float force = map(distance, 0, kShakeRange, kShakeForce, 0);
+        force = constrain(force, 0, kShakeForce);
+        position = new PVector(position.x, position.y + sign * force);
+      }
+      break;
+    }
   }
 
   boolean outOfBorder()
@@ -116,8 +160,18 @@ class Node
     switch(type)
     {
     case 0:
-      imageMode(CENTER);
-      image(img1, position.x, position.y, img1.width * .5, img1.height * .5);
+
+      //      imageMode(CENTER);
+      //      image(img1, position.x, position.y, img1.width * size, img1.height * size);
+      {
+        pushMatrix();
+        translate(width/2, height/2);
+        PVector p = fishEye((int)position.x, (int)position.y, width, height);
+        translate(p.x, p.y, p.z);
+        imageMode(CENTER);
+        image(img1, 0, 0, img1.width * size, img1.height * size);
+        popMatrix();
+      }
       break;
     case 1:
       imageMode(CENTER);
@@ -128,8 +182,17 @@ class Node
       image(img, position.x, position.y, img.width * .7, img.height * .7);
       break;
     case 3:
-      imageMode(CENTER);
-      image(img, position.x, position.y);
+      //      imageMode(CENTER);
+      //      image(img, position.x, position.y);
+      {
+        pushMatrix();
+        translate(width/2, height/2);
+        PVector p = fishEye((int)position.x, (int)position.y, width, height);
+        translate(p.x, p.y, p.z);
+        imageMode(CENTER);
+        image(img, 0, 0, img.width * size, img.height * size);
+        popMatrix();
+      }
       break;
     }
   }
@@ -142,14 +205,32 @@ class Node
         float distance = dist(position.x, position.y, n.position.x, n.position.y);
         if (distance > kMinDist && distance < kMaxDist)
         {
-          beginShape();
-          stroke(0, 0, 100, 0);
-          vertex(position.x, position.y);
-          stroke(0, 0, 100, 100);
-          vertex(0.5 * (position.x + n.position.x), 0.5 * (position.y + n.position.y));
-          stroke(0, 0, 100, 0);
-          vertex(n.position.x, n.position.y);
-          endShape();
+//          beginShape();
+//          stroke(0, 0, 100, 0);
+//          vertex(position.x, position.y);
+//          stroke(0, 0, 100, 100);
+//          vertex(0.5 * (position.x + n.position.x), 0.5 * (position.y + n.position.y));
+//          stroke(0, 0, 100, 0);
+//          vertex(n.position.x, n.position.y);
+//          endShape();
+
+          {
+            pushMatrix();
+            translate(width/2, height/2);
+            beginShape();
+            stroke(0, 0, 100, 0);
+            PVector p = fishEye((int)position.x, (int)position.y, width, height);
+            vertex(p.x, p.y, p.z);
+            stroke(0, 0, 100, 100);
+            p = fishEye((int)(0.5 * (position.x + n.position.x)), (int)(0.5 * (position.y + n.position.y)), width, height);
+            vertex(p.x, p.y, p.z);
+            stroke(0, 0, 100, 0);
+            p = fishEye((int)n.position.x, (int)n.position.y, width, height);
+            vertex(p.x, p.y, p.z);
+            endShape();
+            
+            popMatrix();
+          }
         }
       }
     }
@@ -170,6 +251,18 @@ class Node
   {
     n = constrain(n, sourceLow, sourceHigh);
     return map(n, sourceLow, sourceHigh, destLow, destHigh);
+  }
+
+  PVector fishEye(int inX, int inY, int maxX, int maxY)
+  {
+    float phi = map(inX, 0, maxX, -PI, 0);
+    float theta = map(inY, 0, maxY, PI, 0);
+
+    float x = r * sin(theta) * cos(phi);
+    float z = -r * sin(theta) * sin(phi);
+    float y = r * cos(theta);
+
+    return new PVector(x, y, z);
   }
 }
 

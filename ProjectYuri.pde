@@ -3,6 +3,10 @@ import SimpleOpenNI.*;
 import org.openkinect.*;
 import org.openkinect.processing.*;
 import controlP5.*;
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+
+
 
 //mode 0: cam
 //mode 1: openni
@@ -14,6 +18,16 @@ Capture cam;
 SimpleOpenNI openni;
 ControlP5 cp5;
 Kinect kinect;
+
+//minim
+Minim minim;
+AudioInput in;
+BeatDetect beat;
+
+boolean IsKick;
+boolean IsSnare;
+boolean IsHat;
+int sensitivity = 400;
 
 int POINT_SIZE = 12;
 
@@ -52,6 +66,15 @@ void setup()
   GUISetup();
 
 
+  minim = new Minim(this);
+  in = minim.getLineIn();
+  beat = new BeatDetect();
+  beat.detectMode(BeatDetect.FREQ_ENERGY);
+  beat.setSensitivity (sensitivity);
+  IsKick = false;
+  IsSnare = false;
+  IsHat = false;
+
 
   if (mode == 0)
     setupCam();
@@ -80,6 +103,11 @@ void setup()
 
 void draw()
 {
+  beat.detect(in.mix);
+  IsKick = beat.isKick();
+  IsSnare = beat.isSnare();
+  IsHat = beat.isHat();
+
   imageMode(CORNER);
   colorMode(RGB, 255, 255, 255, 100);
   tint(255, 255, 255, 100);
@@ -112,5 +140,21 @@ void draw()
 
   if (showFPS)
     DisplayFPS();
+
+  if (IsKick)
+  {
+    PVector p = new PVector(random(width), random(height));
+    PVector p2 = new PVector(random(width), random(height));
+    PVector p3 = new PVector(random(width), random(height));
+    
+    int shakeType = (int)random(3);
+//    int shakeType = 0;
+    
+    for (Node node : nodeHashMap.values ()) {
+      node.shake(p, shakeType);
+      node.shake(p2, shakeType);
+      node.shake(p3, shakeType);
+    }
+  }
 }
 

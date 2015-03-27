@@ -49,27 +49,28 @@ void GUISetup()
         .setRange(0, 100)
           ;
 
+  cp5.addSlider("K")
+    .setPosition(0, 30)
+      .setGroup(g1)
+        .setRange(0, 0.1)
+          ;
+
   cp5.addSlider("kReachDistThrehold")
     .setPosition(0, 40)
       .setGroup(g1)
         .setRange(1, 100)
           ;
 
-
-  cp5.addSlider("K")
-    .setPosition(0, 30)
+  cp5.addSlider("kShakeRange")
+    .setPosition(0, 50)
       .setGroup(g1)
-        .setRange(0, 0.01)
+        .setRange(0, 1000)
           ;
-
-  //  cp5.addSlider("damping")
-  //    .setPosition(0, 30)
-  //      .setRange(0.8, 1)
-  //        ;
-  //  cp5.addSlider("randomness")
-  //    .setPosition(0, 40)
-  //      .setRange(0, 5)
-  //        ;
+  cp5.addSlider("kShakeForce")
+    .setPosition(0, 60)
+      .setGroup(g1)
+        .setRange(0, 1000)
+          ;
 }
 
 void controlEvent(ControlEvent theControlEvent) {
